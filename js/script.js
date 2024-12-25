@@ -44,8 +44,8 @@ function budgetFun() {
     } else {
         errorMesgEl.innerHTML = "";
         errorMesgEl.classList.remove("error");
-        budgetCardEl.textContent = budgetValue.toFixed(2);
-        updateBalance();
+        budgetCardEl.textContent = budgetValue.toFixed(2); // Update budget display
+        updateBalance(); // Update balance
     }
 }
 
@@ -54,7 +54,7 @@ function addExpense() {
     const expenseDesc = expenseDescEl.value.trim();
     const expenseAmount = parseFloat(expenseAmountEl.value.trim());
 
-    if (expenseDesc === '' || isNaN(expenseAmount) || expenseAmount <= 0) {
+    if (expenseDesc === "" || isNaN(expenseAmount) || expenseAmount <= 0) {
         errorMesgEl.innerHTML = "<p>Please Enter Valid Expense Details</p>";
         errorMesgEl.classList.add("error");
     } else {
@@ -64,12 +64,12 @@ function addExpense() {
         const expenseItem = {
             id: itemId++,
             description: expenseDesc,
-            amount: expenseAmount
+            amount: expenseAmount,
         };
-        itemList.push(expenseItem);
-        addExpenseToTable(expenseItem);
-        updateExpenses();
-        updateBalance();
+        itemList.push(expenseItem); // Add expense to list
+        addExpenseToTable(expenseItem); // Display expense in table
+        updateExpenses(); // Update expenses total
+        updateBalance(); // Update balance
     }
 }
 
@@ -83,7 +83,6 @@ function addExpenseToTable(expenseItem) {
         <li>${expenseItem.description}</li>
         <li><span>$</span>${expenseItem.amount.toFixed(2)}</li>
         <li>
-            
             <button type="button" class="btn_delete" onclick="deleteExpense(${expenseItem.id})">Delete</button>
         </li>
     `;
@@ -94,42 +93,37 @@ function addExpenseToTable(expenseItem) {
 // Update Expenses
 function updateExpenses() {
     const totalExpenses = itemList.reduce((sum, item) => sum + item.amount, 0);
-    expensesCardEl.textContent = totalExpenses.toFixed(2);
+    expensesCardEl.textContent = totalExpenses.toFixed(2); // Update expenses total display
 }
 
 // Update Balance
 function updateBalance() {
-    const budget = parseFloat(budgetCardEl.textContent.trim()) || 0; // Trim to remove unwanted spaces
-    const expenses = parseFloat(expensesCardEl.textContent.trim()) || 0; // Trim to remove unwanted spaces
+    const budget = parseFloat(budgetCardEl.textContent.trim()) || 0; // Parse budget or default to 0
+    const expenses = parseFloat(expensesCardEl.textContent.trim()) || 0; // Parse expenses or default to 0
     const balance = budget - expenses;
 
-    // Prevent negative balance unless intentionally allowed
-    if (balance < 0) {
-        balanceCardEl.textContent = "0.00"; // Prevent negative balance display
-        errorMesgEl.innerHTML = "<p>Expenses exceed budget! Adjust accordingly.</p>";
+    // Adjust behavior when expenses match or exceed budget
+    if (balance <= 0) {
+        balanceCardEl.textContent = "0.00"; // Always show 0 balance
+        errorMesgEl.innerHTML = "<p>Expenses have exceeded or met the budget! Please adjust.</p>";
         errorMesgEl.classList.add("error");
     } else {
-        balanceCardEl.textContent = balance.toFixed(2);
-        errorMesgEl.innerHTML = "";
+        balanceCardEl.textContent = balance.toFixed(2); // Display formatted balance
+        errorMesgEl.innerHTML = ""; // Clear any error messages
         errorMesgEl.classList.remove("error");
     }
 }
 
 // Delete Expense
 function deleteExpense(id) {
-    itemList = itemList.filter(item => item.id !== id);
-    renderTable();
-    updateExpenses();
-    updateBalance();
-}
-
-// Edit Expense (Optional: Not implemented in detail)
-function editExpense(id) {
-    // Implement edit functionality here
+    itemList = itemList.filter((item) => item.id !== id); // Remove expense by ID
+    renderTable(); // Re-render table
+    updateExpenses(); // Update expenses total
+    updateBalance(); // Update balance
 }
 
 // Re-render the table after any change
 function renderTable() {
-    tblRecordEl.innerHTML = "";
-    itemList.forEach(addExpenseToTable);
+    tblRecordEl.innerHTML = ""; // Clear table
+    itemList.forEach(addExpenseToTable); // Re-add all expenses
 }
