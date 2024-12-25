@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", btnEvents);
 
 // Handle Budget Calculation
 function budgetFun() {
-    const budgetValue = parseFloat(budgetInputEl.value);
+    const budgetValue = parseFloat(budgetInputEl.value.trim());
     if (isNaN(budgetValue) || budgetValue <= 0) {
         errorMesgEl.innerHTML = "<p>Please Enter Budget Amount | More than 0</p>";
         errorMesgEl.classList.add("error");
@@ -51,8 +51,8 @@ function budgetFun() {
 
 // Add Expense
 function addExpense() {
-    const expenseDesc = expenseDescEl.value;
-    const expenseAmount = parseFloat(expenseAmountEl.value);
+    const expenseDesc = expenseDescEl.value.trim();
+    const expenseAmount = parseFloat(expenseAmountEl.value.trim());
 
     if (expenseDesc === '' || isNaN(expenseAmount) || expenseAmount <= 0) {
         errorMesgEl.innerHTML = "<p>Please Enter Valid Expense Details</p>";
@@ -99,10 +99,20 @@ function updateExpenses() {
 
 // Update Balance
 function updateBalance() {
-    const budget = parseFloat(budgetCardEl.textContent);
-    const expenses = parseFloat(expensesCardEl.textContent);
+    const budget = parseFloat(budgetCardEl.textContent.trim()) || 0; // Trim to remove unwanted spaces
+    const expenses = parseFloat(expensesCardEl.textContent.trim()) || 0; // Trim to remove unwanted spaces
     const balance = budget - expenses;
-    balanceCardEl.textContent = balance.toFixed(2);
+
+    // Prevent negative balance unless intentionally allowed
+    if (balance < 0) {
+        balanceCardEl.textContent = "0.00"; // Prevent negative balance display
+        errorMesgEl.innerHTML = "<p>Expenses exceed budget! Adjust accordingly.</p>";
+        errorMesgEl.classList.add("error");
+    } else {
+        balanceCardEl.textContent = balance.toFixed(2);
+        errorMesgEl.innerHTML = "";
+        errorMesgEl.classList.remove("error");
+    }
 }
 
 // Delete Expense
